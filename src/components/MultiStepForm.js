@@ -16,17 +16,21 @@ const MultiStepForm = () => {
     state: '',
     zip: ''
   });
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     const savedData = localStorage.getItem('formData');
     if (savedData) {
       setFormData(JSON.parse(savedData));
     }
+    setIsLoaded(true); // Set isLoaded to true after fetching the data
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('formData', JSON.stringify(formData));
-  }, [formData]);
+    if (isLoaded) {
+      localStorage.setItem('formData', JSON.stringify(formData));
+    }
+  }, [formData, isLoaded]);
 
   const nextStep = () => {
     setStep(step + 1);
@@ -53,6 +57,10 @@ const MultiStepForm = () => {
     });
     setStep(1);
   };
+
+  if (!isLoaded) {
+    return <div>Loading...</div>; // Display a loading indicator until the form data is loaded
+  }
 
   switch (step) {
     case 1:
